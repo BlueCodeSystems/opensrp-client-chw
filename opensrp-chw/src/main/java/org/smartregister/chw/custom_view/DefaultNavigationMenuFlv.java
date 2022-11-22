@@ -18,6 +18,11 @@ public abstract class DefaultNavigationMenuFlv implements NavigationMenu.Flavour
     }
 
     @Override
+    public boolean hasSyncStatusProgressBar() {
+        return true;
+    }
+
+    @Override
     public HashMap<String, String> getTableMapValues() {
         return new HashMap<>();
     }
@@ -31,7 +36,6 @@ public abstract class DefaultNavigationMenuFlv implements NavigationMenu.Flavour
     public boolean hasServiceReport() {
         return false;
     }
-
 
     @Override
     public Intent getStockReportIntent(Activity activity) {
@@ -58,4 +62,8 @@ public abstract class DefaultNavigationMenuFlv implements NavigationMenu.Flavour
         return null;
     }
 
+    @Override
+    public boolean hasMultipleLanguages() {
+        return true;
+    }
 }

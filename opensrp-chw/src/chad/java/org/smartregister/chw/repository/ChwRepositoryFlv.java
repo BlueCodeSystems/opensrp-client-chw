@@ -56,13 +56,19 @@ public class ChwRepositoryFlv {
                     upgradeToVersion10(db, oldVersion);
                     break;
                 case 11:
-                    upgradeToVersion11(context,db);
+                    upgradeToVersion11(context, db);
                     break;
                 case 12:
                     upgradeToVersion12(db);
                     break;
                 case 13:
                     upgradeToVersion13(db);
+                    break;
+                case 14:
+                    upgradeToVersion14(db);
+                    break;
+                case 15:
+                    upgradeToVersion15(db);
                     break;
                 default:
                     break;
@@ -71,6 +77,13 @@ public class ChwRepositoryFlv {
         }
     }
 
+    private static void upgradeToVersion14(SQLiteDatabase db) {
+        try {
+            db.execSQL("ALTER TABLE ec_family_member ADD COLUMN marital_status VARCHAR;");
+        } catch (Exception e) {
+            Timber.e(e, "upgradeToVersion14");
+        }
+    }
 
     private static void upgradeToVersion2(Context context, SQLiteDatabase db) {
         try {
@@ -195,6 +208,10 @@ public class ChwRepositoryFlv {
         } catch (Exception e) {
             Timber.e(e);
         }
+    }
+
+    private static void upgradeToVersion15(SQLiteDatabase db) {
+        RepositoryUtils.updateNullEventIds(db);
     }
 
     private static void initializeIndicatorDefinitions(ReportingLibrary reportingLibrary, SQLiteDatabase sqLiteDatabase) {

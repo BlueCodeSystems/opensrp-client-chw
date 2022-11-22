@@ -3,6 +3,7 @@ package org.smartregister.chw.interactor;
 import android.content.Context;
 
 import androidx.annotation.VisibleForTesting;
+import androidx.core.util.Supplier;
 
 import com.vijay.jsonwizard.constants.JsonFormConstants;
 
@@ -295,7 +296,12 @@ public abstract class DefaultPncHomeVisitInteractorFlv implements PncHomeVisitIn
                         .withBaseEntityID(baby.getBaseEntityID())
                         .withProcessingMode(BaseAncHomeVisitAction.ProcessingMode.SEPARATE)
                         .withDestinationFragment(BaseHomeVisitImmunizationFragment.getInstance(view, baby.getBaseEntityID(), details, displays))
-                        .withHelper(new ImmunizationActionHelper(context, wrappers))
+                        .withHelper(new ImmunizationActionHelper(context, new Supplier<List<VaccineWrapper>>() {
+                            @Override
+                            public List<VaccineWrapper> get() {
+                                return wrappers;
+                            }
+                        }))
                         .build();
                 actionList.put(MessageFormat.format(context.getString(R.string.pnc_immunization_at_birth), baby.getFullName()), action);
             }
@@ -377,7 +383,7 @@ public abstract class DefaultPncHomeVisitInteractorFlv implements PncHomeVisitIn
     protected void evaluateBirthCertForm(Person person) throws Exception {
         PncBaby baby = (PncBaby) person;
         String title = MessageFormat.format(context.getString(R.string.pnc_birth_certification), baby.getFullName());
-        hasBirthCert = VisitDao.memberHasBirthCert(person.getBaseEntityID());
+        hasBirthCert = getBirthCert(person);
 
         if (!hasBirthCert) {
             Map<String, List<VisitDetail>> details = getDetails(baby.getBaseEntityID(), Constants.EventType.BIRTH_CERTIFICATION);
@@ -452,6 +458,10 @@ public abstract class DefaultPncHomeVisitInteractorFlv implements PncHomeVisitIn
 
     protected int getAgeInDays(Date dob) {
         return Days.daysBetween(new DateTime(dob).toLocalDate(), new DateTime().toLocalDate()).getDays();
+    }
+
+    protected Boolean getBirthCert(Person person) {
+        return VisitDao.memberHasBirthCert(person.getBaseEntityID());
     }
 
     private class VaccineCardHelper extends HomeVisitActionHelper {
